@@ -1,0 +1,137 @@
+/* PrimeReact Styles */
+@import "primereact/resources/themes/lara-light-blue/theme.css";
+@import "primereact/resources/primereact.min.css";
+@import "primeicons/primeicons.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global overrides */
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: #1F2937;
+  background-color: #FFFFFF;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+/* Institutional Design System Utilities */
+.bg-primary-blue {
+  background-color: #0D5C99;
+}
+
+.bg-dark-blue {
+  background-color: #083B66;
+}
+
+.bg-light-blue {
+  background-color: #EAF4FC;
+}
+
+.text-primary-blue {
+  color: #0D5C99;
+}
+
+.text-dark-blue {
+  color: #083B66;
+}
+
+/* Replace brand gradients with solid institutional colors or very subtle academic navy transitions */
+.bg-brand-gradient {
+  background: linear-gradient(180deg, #0D5C99 0%, #083B66 100%);
+}
+
+.bg-brand-gradient-hover {
+  background: linear-gradient(180deg, #093F69 0%, #052640 100%);
+}
+
+.text-brand-gradient {
+  color: #0D5C99;
+}
+
+/* Academic Card Design: Clean, sharp, subtle shadows, thin border, no glassmorphism */
+.academic-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  border-radius: 4px; /* professional straight-edged/slightly rounded look */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.academic-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  border-color: #D1D5DB;
+}
+
+/* PrimeReact overrides for branding colors */
+.p-button {
+  background: #0D5C99 !important;
+  border: 1px solid #0D5C99 !important;
+  font-family: 'Inter', sans-serif;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease !important;
+}
+
+.p-button:hover {
+  background: #083B66 !important;
+  border-color: #083B66 !important;
+}
+
+.p-button.p-button-outlined {
+  background: transparent !important;
+  border: 1px solid #0D5C99 !important;
+  color: #0D5C99 !important;
+}
+
+.p-button.p-button-outlined:hover {
+  background: #EAF4FC !important;
+  color: #0D5C99 !important;
+  border-color: #0D5C99 !important;
+}
+
+.p-button.p-button-secondary {
+  background: #083B66 !important;
+  border: 1px solid #083B66 !important;
+  color: #FFFFFF !important;
+}
+
+.p-button.p-button-secondary:hover {
+  background: #052640 !important;
+  border-color: #052640 !important;
+}
+
+.p-card {
+  border-radius: 4px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+}
+
+.p-megamenu {
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
