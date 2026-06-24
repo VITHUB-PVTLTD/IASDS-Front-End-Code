@@ -1,0 +1,14 @@
+{
+    "name": "Indian Association of Statistics & Data Science",
+    "short_name": "IASDS",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#00357D",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}

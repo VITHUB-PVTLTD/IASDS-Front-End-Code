@@ -25,6 +25,7 @@ export const Home: React.FC = () => {
   const [updates, setUpdates] = useState<any[]>([]);
   const [councilMembers, setCouncilMembers] = useState<any[]>([]);
   const [achievements, setAchievements] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Interactive Overlays
   const [isPresidentOpen, setIsPresidentOpen] = useState(false);
@@ -151,6 +152,8 @@ export const Home: React.FC = () => {
         }
       } catch (err) {
         console.error("Failed to load home page feed data:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchHomeDetails();
@@ -196,6 +199,17 @@ export const Home: React.FC = () => {
   //     </div>
   //   );
   // };
+
+  if (loading) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-slate-200 border-t-[#0D5C99] rounded-full animate-spin"></div>
+          <p className="mt-4 text-[#0D5C99] font-bold text-sm uppercase tracking-widest">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-white">
