@@ -64,19 +64,17 @@ export const Register: React.FC = () => {
     institution: "", specialization: "", organization: "",
     designation: "", experience: "", country: "India",
     state: "", city: "", postalCode: "", address: "",
-    membershipTypeId: "1",
+    membershipTypeId: "",
   });
 
   const [files, setFiles] = useState<{ profilePhoto: File | null; supportingDocument: File | null }>({
     profilePhoto: null, supportingDocument: null,
   });
+  const [receiptPreview, setReceiptPreview] = useState<{ url: string; isPdf: boolean } | null>(null);
 
   useEffect(() => {
     api.get("/public/membership-types").then((res) => {
       setMembershipTypes(res.data);
-      if (res.data.length > 0) {
-        setFormData((p) => ({ ...p, membershipTypeId: String(res.data[0].id) }));
-      }
     }).catch(console.error);
   }, []);
 
@@ -88,7 +86,17 @@ export const Register: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     field: "profilePhoto" | "supportingDocument"
   ) => {
-    if (e.target.files?.[0]) setFiles({ ...files, [field]: e.target.files[0] });
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFiles({ ...files, [field]: file });
+    if (field === "supportingDocument") {
+      const isPdf = file.type === "application/pdf";
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setReceiptPreview({ url: ev.target?.result as string, isPdf });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const validateStep = () => {
@@ -110,6 +118,13 @@ export const Register: React.FC = () => {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Guard: only allow actual submission from the final review step
+    if (step !== 6) return;
+    // Also guard: membership type must be selected
+    if (!formData.membershipTypeId) {
+      setRegError("Please select a membership type before submitting.");
+      return;
+    }
     setRegLoading(true);
     setRegError(null);
     const submitData = new FormData();
@@ -496,20 +511,56 @@ export const Register: React.FC = () => {
                     <h2 style={{ margin: 0, color: "#111827", fontWeight: 800, fontSize: "18px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <Upload size={18} color="#00357D" /> Document Uploads
                     </h2>
-                    {[
-                      { field: "profilePhoto" as const, label: "Profile Photo (JPG / PNG)", accept: "image/*" },
-                      { field: "supportingDocument" as const, label: "Payment Transaction Receipt (PDF or Image) *", accept: "image/*,application/pdf" },
-                    ].map(({ field, label, accept }) => (
-                      <div key={field} style={{ background: "#F9FAFB", border: "2px dashed #D1D5DB", borderRadius: "14px", padding: "24px" }}>
-                        <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "#374151", marginBottom: "10px" }}>{label}</label>
-                        <input type="file" accept={accept} onChange={(e) => handleFileChange(e, field)} style={{ fontSize: "12px" }} />
-                        {files[field] && (
-                          <span style={{ display: "block", marginTop: "6px", fontSize: "11px", color: "#059669", fontWeight: 600 }}>
-                            ✓ {files[field]!.name}
-                          </span>
-                        )}
-                      </div>
-                    ))}
+
+                    {/* Profile Photo upload */}
+                    <div style={{ background: "#F9FAFB", border: "2px dashed #D1D5DB", borderRadius: "14px", padding: "24px" }}>
+                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "#374151", marginBottom: "10px" }}>Profile Photo (JPG / PNG)</label>
+                      <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, "profilePhoto")} style={{ fontSize: "12px" }} />
+                      {files.profilePhoto && (
+                        <span style={{ display: "block", marginTop: "6px", fontSize: "11px", color: "#059669", fontWeight: 600 }}>
+                          ✓ {files.profilePhoto.name}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Transaction Receipt upload with live preview */}
+                    <div style={{ background: "#F9FAFB", border: `2px dashed ${files.supportingDocument ? "#059669" : "#D1D5DB"}`, borderRadius: "14px", padding: "24px" }}>
+                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "#374151", marginBottom: "10px" }}>
+                        Payment Transaction Receipt (PDF or Image) *
+                      </label>
+                      <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, "supportingDocument")} style={{ fontSize: "12px" }} />
+                      {files.supportingDocument && (
+                        <span style={{ display: "block", marginTop: "6px", fontSize: "11px", color: "#059669", fontWeight: 600 }}>
+                          ✓ {files.supportingDocument.name}
+                        </span>
+                      )}
+                      {/* Live preview */}
+                      {receiptPreview && (
+                        <div style={{ marginTop: "14px" }}>
+                          {receiptPreview.isPdf ? (
+                            <div style={{ background: "#EEF4FF", border: "1px solid #C7D7F9", borderRadius: "10px", padding: "14px 16px", display: "flex", alignItems: "center", gap: "10px" }}>
+                              <div style={{ width: "36px", height: "36px", background: "#DC2626", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <span style={{ color: "#fff", fontSize: "9px", fontWeight: 800, letterSpacing: "0.04em" }}>PDF</span>
+                              </div>
+                              <div>
+                                <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#1E3A8A" }}>PDF Document Ready</p>
+                                <p style={{ margin: 0, fontSize: "10px", color: "#6B7280", marginTop: "2px" }}>{files.supportingDocument?.name}</p>
+                              </div>
+                              <span style={{ marginLeft: "auto", fontSize: "11px", color: "#059669", fontWeight: 700 }}>✓ Uploaded</span>
+                            </div>
+                          ) : (
+                            <div style={{ marginTop: "4px" }}>
+                              <p style={{ margin: "0 0 8px", fontSize: "11px", fontWeight: 700, color: "#374151" }}>Preview:</p>
+                              <img
+                                src={receiptPreview.url}
+                                alt="Receipt preview"
+                                style={{ maxWidth: "100%", maxHeight: "240px", borderRadius: "10px", border: "1px solid #E5E7EB", objectFit: "contain" }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -522,6 +573,7 @@ export const Register: React.FC = () => {
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Select Membership Tier</label>
                       <select name="membershipTypeId" value={formData.membershipTypeId} onChange={handleTextChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold">
+                        <option value="" disabled>-- Select Membership Type --</option>
                         {membershipTypes.map((t) => (
                           <option key={t.id} value={t.id}>{t.name} ({t.currency === "USD" ? "USD " : "₹"}{parseFloat(t.feeAmount).toLocaleString()})</option>
                         ))}
@@ -534,12 +586,38 @@ export const Register: React.FC = () => {
                         ["Email", formData.email],
                         ["Institution", formData.institution || "N/A"],
                         ["State", formData.state],
-                        ["Transaction Receipt", files.supportingDocument ? "Uploaded ✓" : "⚠ Missing"],
                       ].map(([k, v]) => (
                         <p key={k} style={{ margin: "6px 0", fontSize: "13px", color: "#374151" }}>
                           <strong>{k}:</strong> {v}
                         </p>
                       ))}
+                      {/* Receipt preview in summary */}
+                      <div style={{ marginTop: "10px" }}>
+                        <strong style={{ fontSize: "13px", color: "#374151" }}>Transaction Receipt:</strong>
+                        {!files.supportingDocument ? (
+                          <span style={{ fontSize: "13px", color: "#DC2626", marginLeft: "6px" }}>⚠ Missing — please go back to Step 5</span>
+                        ) : receiptPreview ? (
+                          receiptPreview.isPdf ? (
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: "8px", padding: "8px 12px" }}>
+                              <div style={{ width: "28px", height: "28px", background: "#DC2626", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <span style={{ color: "#fff", fontSize: "8px", fontWeight: 800 }}>PDF</span>
+                              </div>
+                              <span style={{ fontSize: "12px", color: "#374151", fontWeight: 600 }}>{files.supportingDocument.name}</span>
+                              <span style={{ fontSize: "11px", color: "#059669", marginLeft: "auto", fontWeight: 700 }}>✓ Ready</span>
+                            </div>
+                          ) : (
+                            <div style={{ marginTop: "8px" }}>
+                              <img
+                                src={receiptPreview.url}
+                                alt="Receipt"
+                                style={{ maxWidth: "100%", maxHeight: "160px", borderRadius: "8px", border: "1px solid #E5E7EB", objectFit: "contain" }}
+                              />
+                            </div>
+                          )
+                        ) : (
+                          <span style={{ fontSize: "13px", color: "#059669", marginLeft: "6px" }}>✓ {files.supportingDocument.name}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}

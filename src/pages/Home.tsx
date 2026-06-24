@@ -32,64 +32,64 @@ export const Home: React.FC = () => {
   const [notifOpen, setNotifOpen] = useState<any | null>(null);
 
   // Gallery items
-  const DEFAULT_GALLERY_IMAGES = [
-    {
-      url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop",
-      caption: "IASDS National Conference 2026 Keynote Session"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=800&auto=format&fit=crop",
-      caption: "Executive Panel Discussion on Machine Learning & Statistics"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop",
-      caption: "Advanced Data Modelling Workshop - IIT Bombay"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop",
-      caption: "Felicitation Ceremony of Fellowship Inductees"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop",
-      caption: "Symposium on Mathematical Foundations of Artificial Intelligence"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop",
-      caption: "Colloquium of Young Researchers and Statisticians"
-    }
-  ];
+  // const DEFAULT_GALLERY_IMAGES = [
+  //   {
+  //     url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop",
+  //     caption: "IASDS National Conference 2026 Keynote Session"
+  //   },
+  //   {
+  //     url: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=800&auto=format&fit=crop",
+  //     caption: "Executive Panel Discussion on Machine Learning & Statistics"
+  //   },
+  //   {
+  //     url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop",
+  //     caption: "Advanced Data Modelling Workshop - IIT Bombay"
+  //   },
+  //   {
+  //     url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop",
+  //     caption: "Felicitation Ceremony of Fellowship Inductees"
+  //   },
+  //   {
+  //     url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop",
+  //     caption: "Symposium on Mathematical Foundations of Artificial Intelligence"
+  //   },
+  //   {
+  //     url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop",
+  //     caption: "Colloquium of Young Researchers and Statisticians"
+  //   }
+  // ];
 
-  const [galleryImages, setGalleryImages] = useState<any[]>(DEFAULT_GALLERY_IMAGES);
+  const [galleryImages, setGalleryImages] = useState<any[]>([]);
 
   // Carousel state
-  const DEFAULT_SLIDES = [
-    {
-      id: 0,
-      imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1600&auto=format&fit=crop",
-      title: "Advancing Statistics and Data Science Across India",
-      subtitle: "Connecting researchers, academicians, students, and industry professionals to foster mathematical excellence, analytical breakthroughs, and empirical reasoning.",
-      buttonLabel: "Become a Member",
-      buttonLink: "/membership/register",
-    },
-    {
-      id: 1,
-      imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=1600&auto=format&fit=crop",
-      title: "National Conference on Statistics & Data Science 2026",
-      subtitle: "Join India's leading statistical minds for keynote sessions, workshops, and collaborative research presentations at IASDS annual convention.",
-      buttonLabel: "Explore Events",
-      buttonLink: "/news-events",
-    },
-    {
-      id: 2,
-      imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1600&auto=format&fit=crop",
-      title: "Academic Excellence in Statistical Research",
-      subtitle: "IASDS supports peer-reviewed publications, skill-development workshops, and industry-academia collaborations across India.",
-      buttonLabel: "View Achievements",
-      buttonLink: "/achievements",
-    },
-  ];
+  // const DEFAULT_SLIDES = [
+  //   {
+  //     id: 0,
+  //     imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1600&auto=format&fit=crop",
+  //     title: "Advancing Statistics and Data Science Across India",
+  //     subtitle: "Connecting researchers, academicians, students, and industry professionals to foster mathematical excellence, analytical breakthroughs, and empirical reasoning.",
+  //     buttonLabel: "Become a Member",
+  //     buttonLink: "/membership/register",
+  //   },
+  //   {
+  //     id: 1,
+  //     imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=1600&auto=format&fit=crop",
+  //     title: "National Conference on Statistics & Data Science 2026",
+  //     subtitle: "Join India's leading statistical minds for keynote sessions, workshops, and collaborative research presentations at IASDS annual convention.",
+  //     buttonLabel: "Explore Events",
+  //     buttonLink: "/news-events",
+  //   },
+  //   {
+  //     id: 2,
+  //     imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1600&auto=format&fit=crop",
+  //     title: "Academic Excellence in Statistical Research",
+  //     subtitle: "IASDS supports peer-reviewed publications, skill-development workshops, and industry-academia collaborations across India.",
+  //     buttonLabel: "View Achievements",
+  //     buttonLink: "/achievements",
+  //   },
+  // ];
 
-  const [slides, setSlides] = useState<any[]>(DEFAULT_SLIDES);
+  const [slides, setSlides] = useState<any[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselTimerRef = useRef<number | null>(null);
 

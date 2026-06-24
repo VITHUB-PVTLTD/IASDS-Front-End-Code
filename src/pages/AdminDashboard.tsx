@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { jsPDF } from "jspdf";
 import { useAuth } from "../context/AuthContext";
 import {
   LayoutDashboard, Users, UserCheck, GraduationCap, Newspaper, CalendarDays,
-  BookOpen, Image, MessageSquare, Trophy, Settings, ShieldCheck, LogOut,
+  BookOpen, Image as ImageIcon, MessageSquare, Trophy, Settings, ShieldCheck, LogOut,
   Plus, Pencil, Trash2, Check, X, Eye, RefreshCw,
   Mail, FileText, Upload, AlertTriangle,
   TrendingUp, Menu, UserCog,
@@ -27,6 +28,46 @@ function useToast() {
     setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 4000);
   }, []);
   return { toasts, showToast };
+}
+
+// ─── Download as PDF helper ──────────────────────────────────────────────────
+async function downloadReceiptAsPdf(url: string, filename = "transaction_receipt.pdf") {
+  // If already a PDF data URL, decode and save directly
+  if (url.startsWith("data:application/pdf")) {
+    const base64 = url.split(",")[1];
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    return;
+  }
+
+  // For images (data URL or external URL), draw on canvas and export as PDF
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error("Failed to load image"));
+    img.src = url;
+  });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+
+  const imgData = canvas.toDataURL("image/jpeg", 0.92);
+  const pdfW = 210; // A4 width mm
+  const pdfH = Math.round((img.naturalHeight / img.naturalWidth) * pdfW);
+  const pdf = new jsPDF({ orientation: pdfH > pdfW ? "portrait" : "landscape", unit: "mm", format: [pdfW, pdfH] });
+  pdf.addImage(imgData, "JPEG", 0, 0, pdfW, pdfH);
+  pdf.save(filename);
 }
 
 // ─── Confirm Dialog ──────────────────────────────────────────────────────────
@@ -584,6 +625,22 @@ export const AdminDashboard: React.FC = () => {
     } catch { showToast("Failed to update member", "error"); }
   };
 
+  const handleDeleteMemberProfile = (id: string, name: string) => {
+    confirmDelete(
+      `Permanently delete ${name}'s profile? This will remove all their application data and allow them to re-apply from scratch.`,
+      async () => {
+        try {
+          await api.delete(`/admin/members/${id}`);
+          showToast("Member profile deleted. User can now re-apply.");
+          loadTabData("members");
+        } catch (err: any) {
+          showToast(err.response?.data?.message || "Failed to delete profile", "error");
+        }
+        setConfirmDialog(null);
+      }
+    );
+  };
+
   // ─── Sidebar Nav ──────────────────────────────────────────────────────────
   const navItems: { id: TabId; label: string; icon: any; badge?: number }[] = [
     { id: "overview", label: "Dashboard", icon: LayoutDashboard },
@@ -593,8 +650,8 @@ export const AdminDashboard: React.FC = () => {
     { id: "news", label: "News & Bulletins", icon: Newspaper },
     { id: "events", label: "Events", icon: CalendarDays },
     { id: "publications", label: "Publications", icon: BookOpen },
-    { id: "gallery", label: "Gallery", icon: Image },
-    { id: "carousel", label: "Hero Carousel", icon: Image },
+    { id: "gallery", label: "Gallery", icon: ImageIcon },
+    { id: "carousel", label: "Hero Carousel", icon: ImageIcon },
     { id: "contacts", label: "Contact Messages", icon: MessageSquare, badge: stats.counters.unreadMessages },
     { id: "achievements", label: "Achievements", icon: Trophy },
     { id: "settings", label: "Website Settings", icon: Settings },
@@ -822,11 +879,79 @@ export const AdminDashboard: React.FC = () => {
                         <span><strong className="text-slate-700">Membership:</strong> {app.membershipType?.name}</span>
                         <span><strong className="text-slate-700">Location:</strong> {app.profile?.city}, {app.profile?.state}</span>
                       </div>
-                      {app.profile?.supportingDocumentsUrl && (
-                        <a href={app.profile.supportingDocumentsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:underline font-semibold mt-1">
-                          <FileText className="w-3.5 h-3.5" /> View Transaction Receipt
-                        </a>
-                      )}
+                      {app.profile?.supportingDocumentsUrl && (() => {
+                        const url: string = app.profile.supportingDocumentsUrl;
+                        const isPdf =
+                          url.startsWith("data:application/pdf") ||
+                          url.toLowerCase().includes(".pdf") ||
+                          url.toLowerCase().includes("application/pdf") || url.toLowerCase().includes("image/jpeg;base64");
+                        return (
+                          <div className="mt-2">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Transaction Receipt</p>
+                            {isPdf ? (
+                              <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                                <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border-b border-red-100">
+                                  <div className="w-6 h-6 bg-red-600 rounded flex items-center justify-center shrink-0">
+                                    <span className="text-white text-[8px] font-bold">PDF</span>
+                                  </div>
+                                  <span className="text-xs text-slate-700 font-semibold">PDF Transaction Receipt</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => downloadReceiptAsPdf(url)}
+                                    className="ml-auto text-[10px] text-blue-600 hover:underline font-semibold cursor-pointer"
+                                  >
+                                    Download PDF
+                                  </button>
+                                </div>
+                                {/* Use <object> instead of <iframe> — <iframe> can trigger auto-downloads
+                                    for unsupported MIME types; <object> shows a fallback instead */}
+                                <object
+                                  data={url}
+                                  type="application/pdf"
+                                  className="w-full"
+                                  style={{ height: "280px", border: "none" }}
+                                >
+                                  <div className="flex flex-col items-center justify-center h-full py-8 text-slate-400 text-xs gap-2">
+                                    <FileText className="w-8 h-8 text-slate-300" />
+                                    <span>PDF preview not available in this browser.</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => downloadReceiptAsPdf(url)}
+                                      className="text-blue-600 hover:underline font-semibold"
+                                    >
+                                      Click here to download
+                                    </button>
+                                  </div>
+                                </object>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                <div className="relative group cursor-pointer" onClick={() => window.open(url, "_blank")}>
+                                  <img
+                                    src={url}
+                                    alt="Transaction Receipt"
+                                    className="w-full max-h-48 object-contain rounded-xl border border-slate-200 bg-slate-50 transition-opacity group-hover:opacity-80"
+                                  />
+                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span className="bg-black/60 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1">
+                                      <FileText className="w-3.5 h-3.5" /> Click to open full size
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex justify-end">
+                                  <button
+                                    type="button"
+                                    onClick={() => downloadReceiptAsPdf(url)}
+                                    className="text-[10px] text-blue-600 hover:underline font-semibold cursor-pointer"
+                                  >
+                                    Download PDF
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     {/* Review Actions */}
@@ -892,12 +1017,22 @@ export const AdminDashboard: React.FC = () => {
                         <td className="px-5 py-3.5 text-xs text-slate-600">{m.membershipType?.name || "—"}</td>
                         <td className="px-5 py-3.5"><StatusBadge status={m.status} /></td>
                         <td className="px-5 py-3.5">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             {m.status !== "suspended" && (
                               <button onClick={() => handleMemberStatus(m.id, "suspended")} className="text-[10px] bg-red-50 text-red-600 hover:bg-red-100 px-2.5 py-1 rounded-lg font-semibold transition-all">Suspend</button>
                             )}
                             {m.status === "suspended" && (
                               <button onClick={() => handleMemberStatus(m.id, "approved")} className="text-[10px] bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-2.5 py-1 rounded-lg font-semibold transition-all">Reactivate</button>
+                            )}
+                            {/* Super Admin only: delete rejected/suspended profiles so user can re-apply */}
+                            {user?.role === "Super Admin" && ["rejected", "suspended"].includes(m.status) && (
+                              <button
+                                onClick={() => handleDeleteMemberProfile(m.id, m.profile?.fullName || "this member")}
+                                className="text-[10px] bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded-lg font-semibold transition-all flex items-center gap-1"
+                                title="Delete profile so user can re-apply"
+                              >
+                                <Trash2 className="w-3 h-3" /> Delete Profile
+                              </button>
                             )}
                           </div>
                         </td>
@@ -1262,7 +1397,7 @@ export const AdminDashboard: React.FC = () => {
                       <img src={album.coverImageUrl} alt={album.name} className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" />
                     ) : (
                       <div className="w-full h-40 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                        <Image className="w-10 h-10 text-slate-400" />
+                        <ImageIcon className="w-10 h-10 text-slate-400" />
                       </div>
                     )}
                     <div className="p-4 flex items-start justify-between gap-2">
