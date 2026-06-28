@@ -1,80 +1,203 @@
 <!doctype html>
-
-<html lang="en">
+<html lang="en" dir="ltr">
 
 <head>
   <meta charset="UTF-8" />
-
-  <!-- Favicon -->
-
-  <link rel="icon" href="/logo.png" sizes="any" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Primary SEO -->
+  <!-- ==========================================================
+       PERFORMANCE — preconnect to external origins early
+       ========================================================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <title>
-    Indian Association of Statistics & Data Science (IASDS) | National Professional Association
-  </title>
+  <!-- ==========================================================
+       FAVICON / BROWSER / PWA ICONS
+       NOTE: Vite serves /public at the root, so paths start with /
+       ========================================================== -->
 
-  <meta name="description"
-    content="Indian Association of Statistics & Data Science (IASDS) is a national professional association dedicated to advancing Statistics, Data Science, Artificial Intelligence, Machine Learning, Analytics, Research, Academic Excellence, Professional Development, and Data-Driven Innovation across India." />
+  <!-- Primary SVG favicon (modern browsers) -->
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
 
-  <meta name="keywords"
-    content="IASDS, Indian Association of Statistics and Data Science, Statistics India, Data Science India, Artificial Intelligence India, Machine Learning India, Analytics Association India, Statistical Research, Data Analytics, Academic Association, Professional Association, Research Organization, Statistical Society India, Data Science Society India, AI Research India, Statistics Training, Data Science Training, Research Publications, Academic Development, Statistical Consultancy" />
+  <!-- PNG fallback favicon — 32×32 and 16×16 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="public/logo.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="public/logo.png" />
 
-  <meta name="author" content="Indian Association of Statistics & Data Science (IASDS)" />
+  <!-- Shortcut icon for legacy IE / Windows -->
+  <link rel="shortcut icon" href="public/logo.png" />
 
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <!-- Apple Devices home-screen icon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="public/apple-touch-icon.png" />
 
-  <link rel="canonical" href="https://iasds.org.in/" />
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="public/site.webmanifest" />
 
-  <!-- Open Graph -->
-
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://iasds.org.in/" />
-  <meta property="og:title" content="Indian Association of Statistics & Data Science (IASDS)" />
-  <meta property="og:description"
-    content="National professional association promoting Statistics, Data Science, Artificial Intelligence, Machine Learning, Research, Training, Consultancy, Publications, and Academic Excellence in India." />
-  <meta property="og:image" content="https://iasds.org.in/logo.png" />
-  <meta property="og:site_name" content="IASDS" />
-
-  <!-- Twitter -->
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Indian Association of Statistics & Data Science (IASDS)" />
-  <meta name="twitter:description"
-    content="National association advancing Statistics, Data Science, AI, Machine Learning, Research, Education, Consultancy, and Professional Development across India." />
-  <meta name="twitter:image" content="https://iasds.org.in/logo.png" />
-
-  <!-- Theme -->
-
+  <!-- Browser / OS theme colour -->
   <meta name="theme-color" content="#00357D" />
 
-  <!-- Google Site Verification (Add when available) -->
+  <!-- Windows tile (Edge, IE) -->
+  <meta name="msapplication-TileColor" content="#00357D" />
+  <meta name="msapplication-TileImage" content="public/logo.png" />
+  <meta name="msapplication-config" content="none" />
 
-  <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" /> -->
+  <!-- ==========================================================
+       PRIMARY SEO
+       ========================================================== -->
+
+  <title>IASDS | Indian Association of Statistics &amp; Data Science</title>
+
+  <meta name="description"
+    content="The Indian Association of Statistics &amp; Data Science (IASDS) is India's premier professional association dedicated to advancing Statistics, Data Science, Artificial Intelligence, Machine Learning, Analytics, interdisciplinary research, innovation, and professional collaboration. IASDS connects researchers, academicians, scientists, industry experts, policymakers, institutions, and professionals worldwide through conferences, publications, research, networking, and knowledge exchange." />
+
+  <meta name="keywords"
+    content="IASDS, Indian Association of Statistics and Data Science, Statistics, Data Science, Artificial Intelligence, Machine Learning, Analytics, Research, Professional Association, Scientific Society, Academic Society, Statistical Society, Data Science Society, Computational Statistics, Business Analytics, Predictive Analytics, Applied Statistics, Big Data, Research Publications, International Conferences, Professional Network, India" />
+
+  <meta name="author" content="Indian Association of Statistics &amp; Data Science (IASDS)" />
+
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+  <!-- Canonical URL — update to production domain -->
+  <link rel="canonical" href="https://iasds.org.in/" />
+
+  <!-- Language alternates -->
+  <link rel="alternate" hreflang="en-IN" href="https://iasds.org.in/" />
+  <link rel="alternate" hreflang="x-default" href="https://iasds.org.in/" />
+
+  <!-- Sitemap reference (also in robots.txt) -->
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
+  <!-- ==========================================================
+       OPEN GRAPH (Facebook, LinkedIn, WhatsApp, etc.)
+       ========================================================== -->
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="IASDS" />
+  <meta property="og:url" content="https://iasds.org.in/" />
+  <meta property="og:locale" content="en_IN" />
+
+  <meta property="og:title" content="IASDS | Indian Association of Statistics &amp; Data Science" />
+
+  <meta property="og:description"
+    content="India's premier professional association advancing Statistics, Data Science, Artificial Intelligence, Machine Learning, Analytics, research, innovation, publications, conferences, and global professional collaboration." />
+
+  <meta property="og:image" content="https://iasds.org.in/logo.png" />
+  <meta property="og:image:secure_url" content="https://iasds.org.in/public/logo.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt"
+    content="Official logo of the Indian Association of Statistics &amp; Data Science (IASDS)" />
+
+  <!-- ==========================================================
+       TWITTER / X CARD
+       ========================================================== -->
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@IASDS_India" />
+  <meta name="twitter:creator" content="@IASDS_India" />
+
+  <meta name="twitter:title" content="IASDS | Indian Association of Statistics &amp; Data Science" />
+
+  <meta name="twitter:description"
+    content="A global professional association fostering excellence in Statistics, Data Science, AI, Machine Learning, Analytics, research, innovation, and interdisciplinary collaboration." />
+
+  <meta name="twitter:image" content="https://iasds.org.in/logo.png" />
+  <meta name="twitter:image:alt"
+    content="Official logo of the Indian Association of Statistics &amp; Data Science (IASDS)" />
+
+  <!-- ==========================================================
+       STRUCTURED DATA — Organization (JSON-LD)
+       ========================================================== -->
   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Indian Association of Statistics & Data Science",
-  "alternateName": "IASDS",
-  "url": "https://iasds.org.in",
-  "logo": "https://iasds.org.in/logo.jpg",
-  "description": "National professional association promoting Statistics, Data Science, Artificial Intelligence, Machine Learning, Analytics, Research, Education and Professional Development in India."
-}
-</script>
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Indian Association of Statistics & Data Science",
+    "alternateName": "IASDS",
+    "url": "https://iasds.org.in",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://iasds.org.in/logo.png",
+      "width": 512,
+      "height": 512
+    },
+    "image": "https://iasds.org.in/logo.png",
+    "description": "The Indian Association of Statistics & Data Science (IASDS) is India's premier professional association dedicated to advancing Statistics, Data Science, Artificial Intelligence, Machine Learning, Analytics, interdisciplinary research, innovation, scientific collaboration, conferences, publications, and professional excellence.",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "India"
+    },
+    "areaServed": "Worldwide",
+    "knowsAbout": [
+      "Statistics",
+      "Data Science",
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Analytics",
+      "Research",
+      "Scientific Computing",
+      "Big Data",
+      "Predictive Analytics",
+      "Computational Statistics",
+      "Business Intelligence",
+      "Applied Mathematics"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "availableLanguage": ["English", "Hindi"]
+    },
+    "sameAs": [
+      "https://iasds.org.in"
+    ]
+  }
+  </script>
+
+  <!-- ==========================================================
+       STRUCTURED DATA — WebSite with SearchAction (JSON-LD)
+       Enables Google Sitelinks Search Box
+       ========================================================== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "IASDS",
+    "url": "https://iasds.org.in",
+    "description": "India's premier professional association for Statistics and Data Science.",
+    "inLanguage": "en-IN",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://iasds.org.in/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Google Search Console Verification — replace with real code when available -->
+  <!--
+  <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
+  -->
 
 </head>
 
 <body>
+
+  <!-- Accessible no-script fallback -->
+  <noscript>
+    <p style="text-align:center;padding:2rem;font-family:sans-serif;">
+      This site requires JavaScript to run.
+      Please enable JavaScript in your browser to use
+      <strong>Indian Association of Statistics &amp; Data Science (IASDS)</strong>.
+    </p>
+  </noscript>
+
   <div id="root"></div>
+
   <script type="module" src="/src/main.tsx"></script>
+
 </body>
 
 </html>

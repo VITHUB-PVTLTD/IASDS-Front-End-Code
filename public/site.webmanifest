@@ -1,14 +1,33 @@
 {
-    "name": "Indian Association of Statistics & Data Science",
-    "short_name": "IASDS",
-    "icons": [
-        {
-            "src": "/logo.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#00357D",
-    "background_color": "#ffffff",
-    "display": "standalone"
+  "name": "Indian Association of Statistics & Data Science",
+  "short_name": "IASDS",
+  "description": "India's premier professional association for Statistics and Data Science.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#00357D",
+  "categories": ["education", "science", "business"],
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

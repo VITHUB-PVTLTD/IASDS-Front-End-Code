@@ -57,6 +57,7 @@ export const Register: React.FC = () => {
   const [membershipTypes, setMembershipTypes] = useState<any[]>([]);
   const [regLoading, setRegLoading] = useState(false);
   const [regError, setRegError] = useState<string | null>(null);
+  const [regSuccess, setRegSuccess] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     email: "", password: "", fullName: "", gender: "Male",
@@ -133,8 +134,12 @@ export const Register: React.FC = () => {
     if (files.supportingDocument) submitData.append("supportingDocument", files.supportingDocument);
     try {
       const res = await api.post("/auth/register", submitData, { headers: { "Content-Type": "multipart/form-data" } });
-      alert(res.data.message);
-      navigate("/membership/register?tab=signin");
+      setRegSuccess(
+        res.data.message ||
+          "Your application has been submitted successfully! Redirecting to homepage…"
+      );
+      // Redirect to home after 3 seconds so the user can read the message
+      setTimeout(() => navigate("/", { replace: true }), 3000);
     } catch (err: any) {
       setRegError(err.response?.data?.message || "Registration failed. Please verify inputs.");
     } finally {
@@ -370,6 +375,18 @@ export const Register: React.FC = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Success banner */}
+              {regSuccess && (
+                <div style={{ background: "#F0FDF4", border: "1px solid #86EFAC", borderRadius: "10px", padding: "14px 16px", marginBottom: "20px", display: "flex", gap: "10px", fontSize: "14px", color: "#166534", alignItems: "flex-start" }}>
+                  <CheckCircle2 size={18} style={{ flexShrink: 0, marginTop: "1px", color: "#16A34A" }} />
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700 }}>Application Submitted!</p>
+                    <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#15803D" }}>{regSuccess}</p>
+                    <p style={{ margin: "6px 0 0", fontSize: "12px", color: "#4ADE80" }}>Redirecting to homepage in 3 seconds…</p>
+                  </div>
+                </div>
+              )}
 
               {/* Error banner */}
               {regError && (

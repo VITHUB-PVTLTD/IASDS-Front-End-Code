@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Block private/authenticated routes from crawlers
+Disallow: /portal
+Disallow: /admin
+Disallow: /login
+Disallow: /membership/register
+
+# Sitemap location
+Sitemap: https://iasds.org.in/sitemap.xml

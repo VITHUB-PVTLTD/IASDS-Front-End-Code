@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "r
 import { useAuth } from "./context/AuthContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -21,6 +22,7 @@ import AwardsPage from "./pages/AwardsPage";
 import NewsEventsPage from "./pages/NewsEventsPage";
 import ContactPage from "./pages/ContactPage";
 import Login from "./pages/Login";
+import NotFoundPage from "./pages/NotFoundPage";
 
 // Private Dashboard Pages
 import PortalDashboard from "./pages/PortalDashboard";
@@ -61,6 +63,9 @@ const AppLayout: React.FC = () => {
 
   return (
     <div className={isAdminRoute ? "" : "flex flex-col min-h-screen justify-between bg-white text-slate-800"}>
+      {/* Scroll to top on every route change */}
+      <ScrollToTop />
+
       {!isAdminRoute && <Header />}
 
       <main className={isAdminRoute ? "" : "flex-grow"}>
@@ -110,8 +115,8 @@ const AppLayout: React.FC = () => {
             }
           />
 
-          {/* Catch-all redirect */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch-all 404 page */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
 
